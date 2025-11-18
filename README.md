@@ -1,0 +1,176 @@
+# Pipeline de Análise e Visualização de Dados Meteorológicos - INMET
+
+## 📋 Informações do Projeto
+
+**Disciplina:** Análise e Visualização de Dados - 2025.2  
+**Instituição:** CESAR School  
+**Problema:** Previsão de Temperatura Horária com base em variáveis meteorológicas
+
+## 👥 Membros do Projeto
+
+- [Adicione seu nome e @usuario_github]
+
+## 🎯 Objetivo
+
+Desenvolver um pipeline completo de análise e visualização que integre:
+- Coleta de dados meteorológicos do INMET (CSV)
+- Armazenamento estruturado em PostgreSQL e MinIO
+- Tratamento e limpeza de dados
+- Modelagem preditiva (regressão para previsão de temperatura horária)
+- Visualização interativa via ThingsBoard
+
+## 🏗️ Arquitetura
+
+O pipeline é composto pelos seguintes serviços:
+
+| Serviço | Porta | Função |
+|---------|-------|--------|
+| FastAPI | 8000 | API de ingestão de dados |
+| MinIO | 9000/9001 | Armazenamento de objetos (S3-compatible) |
+| PostgreSQL | 5432 | Banco de dados estruturado |
+| JupyterLab | 8888 | Ambiente de análise e modelagem |
+| MLFlow | 5000 | Versionamento de modelos |
+| ThingsBoard | 8080 | Dashboard e visualização |
+
+## 🚀 Instalação e Execução
+
+### Pré-requisitos
+
+- Docker Desktop instalado e rodando
+- Docker Compose v2.0+
+- 8GB+ de RAM disponível
+
+### Passos para Execução
+
+1. **Clone o repositório:**
+```bash
+git clone <url-do-repositorio>
+cd "Projeto AVD"
+```
+
+2. **Inicie os serviços:**
+```bash
+docker-compose up -d
+```
+
+3. **Aguarde os serviços iniciarem (pode levar 2-3 minutos):**
+```bash
+docker-compose ps
+```
+
+4. **Faça upload do arquivo CSV via API:**
+```bash
+# Windows PowerShell
+curl -X POST "http://localhost:8000/upload" -F "file=@INMET_NE_PE_A301_RECIFE_01-01-2021_A_31-12-2021.CSV"
+
+# Ou usando Python
+python -c "import requests; requests.post('http://localhost:8000/upload', files={'file': open('INMET_NE_PE_A301_RECIFE_01-01-2021_A_31-12-2021.CSV', 'rb')})"
+```
+
+5. **Acesse os serviços:**
+
+- **JupyterLab:** http://localhost:8888 (token: `jovyan`)
+- **MLFlow:** http://localhost:5000
+- **MinIO Console:** http://localhost:9001 (usuário: `minioadmin`, senha: `minioadmin`)
+- **ThingsBoard:** http://localhost:8080 (usuário: `tenant@thingsboard.org`, senha: `tenant`)
+- **FastAPI Docs:** http://localhost:8000/docs
+
+## 📊 Fluxo de Trabalho
+
+1. **Ingestão:** Upload do CSV via FastAPI → dados salvos no MinIO e PostgreSQL
+2. **Tratamento:** Execute o notebook `01_tratamento_dados.ipynb` no JupyterLab
+3. **Modelagem:** Execute o notebook `02_modelagem_temperatura.ipynb` para treinar modelos
+4. **Visualização:** Execute o notebook `03_visualizacoes.ipynb` para gerar gráficos
+5. **Monitoramento:** Acesse MLFlow para ver experimentos e métricas
+6. **Dashboard:** Configure visualizações no ThingsBoard
+
+## 📁 Estrutura do Repositório
+
+```
+/repo
+├── docker-compose.yml          # Orquestração dos contêineres
+├── fastapi/                     # API de ingestão
+│   ├── Dockerfile
+│   └── main.py
+├── jupyterlab/                  # Ambiente de análise
+│   └── Dockerfile
+├── mlflow/                      # Versionamento de modelos
+│   └── Dockerfile
+├── notebooks/                   # Notebooks de análise
+│   ├── 01_tratamento_dados.ipynb
+│   ├── 02_modelagem_temperatura.ipynb
+│   └── 03_visualizacoes.ipynb
+├── sql_scripts/                 # Scripts SQL
+│   └── 01_create_tables.sql
+├── reports/                     # Relatórios e resultados
+├── data/                        # Dados locais (volume)
+└── README.md                    # Este arquivo
+```
+
+## 🔧 Comandos Úteis
+
+### Ver logs dos serviços:
+```bash
+docker-compose logs -f [nome_servico]
+```
+
+### Parar todos os serviços:
+```bash
+docker-compose down
+```
+
+### Parar e remover volumes (limpar dados):
+```bash
+docker-compose down -v
+```
+
+### Reiniciar um serviço específico:
+```bash
+docker-compose restart [nome_servico]
+```
+
+### Verificar estatísticas da API:
+```bash
+curl http://localhost:8000/stats
+```
+
+## 📈 Modelos Implementados
+
+- **Random Forest Regressor:** Modelo ensemble para regressão
+- **Gradient Boosting Regressor:** Modelo de boosting para regressão
+
+Métricas avaliadas:
+- RMSE (Root Mean Squared Error)
+- MAE (Mean Absolute Error)
+- R² (Coeficiente de Determinação)
+
+## 📝 Notas Importantes
+
+- O primeiro acesso ao ThingsBoard pode demorar alguns minutos para inicializar
+- Os dados são persistidos em volumes Docker, então não serão perdidos ao reiniciar
+- O MinIO está configurado para usar credenciais padrão (altere em produção)
+- O PostgreSQL cria automaticamente as tabelas via scripts em `sql_scripts/`
+
+## 🐛 Troubleshooting
+
+**Problema:** Serviços não iniciam
+- Solução: Verifique se as portas estão livres e se o Docker está rodando
+
+**Problema:** Erro de conexão com PostgreSQL
+- Solução: Aguarde alguns segundos após iniciar os serviços para o banco inicializar
+
+**Problema:** JupyterLab não carrega
+- Solução: Acesse http://localhost:8888 e use o token exibido nos logs
+
+## 📚 Referências
+
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [MLFlow Documentation](https://mlflow.org/docs/latest/index.html)
+- [ThingsBoard Documentation](https://thingsboard.io/docs/)
+- [MinIO Documentation](https://min.io/docs/)
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT.
+
+
