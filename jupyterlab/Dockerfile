@@ -21,7 +21,8 @@ RUN pip install --no-cache-dir \
     pandas==2.1.3 \
     numpy==1.26.2 \
     sqlalchemy==2.0.23 \
-    boto3==1.34.0
+    boto3==1.34.0 \
+    requests==2.31.0
 
 # Copia configuração do Jupyter
 COPY jupyter_lab_config.py /home/jovyan/.jupyter/jupyter_lab_config.py
