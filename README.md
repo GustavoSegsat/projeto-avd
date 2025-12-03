@@ -8,7 +8,14 @@
 
 ## 👥 Membros do Projeto
 
-- Gustavo Carneiro e @GustavoSegsat
+Gustavo Carneiro | @GustavoSegsat
+joão marcelo | @a-guy-and-his-computer
+Thiago Queiroz | @tempzz7
+Matheus Araujo | @MathhAraujo
+Felipe Santos | @Felipesmarq
+Felipe Queiroz | @Felipebq1
+Pedro Antônio  | @lovepxdro
+Júlia sales | @julsales
 
 ## 🎯 Objetivo
 
