@@ -8,14 +8,17 @@
 
 ## 👥 Membros do Projeto
 
-Gustavo Carneiro | @GustavoSegsat
-joão marcelo | @a-guy-and-his-computer
-Thiago Queiroz | @tempzz7
-Matheus Araujo | @MathhAraujo
-Felipe Santos | @Felipesmarq
-Felipe Queiroz | @Felipebq1
-Pedro Antônio  | @lovepxdro
-Júlia sales | @julsales
+| Nome              | GitHub |
+|-------------------|--------|
+| Gustavo Carneiro  | [@GustavoSegsat](https://github.com/GustavoSegsat) |
+| João Marcelo      | [@a-guy-and-his-computer](https://github.com/a-guy-and-his-computer) |
+| Thiago Queiroz    | [@tempzz7](https://github.com/tempzz7) |
+| Matheus Araujo    | [@MathhAraujo](https://github.com/MathhAraujo) |
+| Felipe Santos     | [@Felipesmarq](https://github.com/Felipesmarq) |
+| Felipe Queiroz    | [@Felipebq1](https://github.com/Felipebq1) |
+| Pedro Antônio     | [@lovepxdro](https://github.com/lovepxdro) |
+| Júlia Sales       | [@julsales](https://github.com/julsales) |
+
 
 ## 🎯 Objetivo
 
