@@ -3,12 +3,13 @@
 % Pacotes necessários conforme o modelo da SBC
 \usepackage{sbc-template}
 \usepackage{graphicx,url}
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[brazillian]{babel}
+\usepackage[brazilian]{babel}
 \usepackage{float} % Para posicionamento exato das imagens [H]
 
 \sloppy
- 
+
 % Título do Projeto
 \title{Pipeline de Análise e Visualização de Dados Meteorológicos: Previsão de Temperatura com Machine Learning}
 
@@ -124,22 +125,12 @@ O problema foi modelado como uma regressão supervisionada. O dataset foi dividi
 
 % SEÇÃO 4
 \section{Análises e Resultados}
-
 Nesta seção, apresentamos a análise exploratória dos dados meteorológicos coletados, seguida pela avaliação de desempenho dos modelos preditivos desenvolvidos e a interpretação das variáveis mais relevantes.
 
 % --- SUBSEÇÃO 4.1: ANÁLISE EXPLORATÓRIA ---
 \subsection{Análise Exploratória dos Dados}
-
-A análise inicial da série temporal (Figura \ref{fig:serie_temporal}) apresenta a variação da temperatura horária ao longo de todo o ano de 2021. Observa-se a consistência dos dados após o tratamento, bem como a tendência macroscópica de queda de temperatura nos meses centrais do ano, condizente com o inverno na região.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{serie_temporal_temperatura.png}
-    \caption{Série temporal da temperatura horária (Jan-Dez 2021).}
-    \label{fig:serie_temporal}
-\end{figure}
-
-Para entender a distribuição mensal, analisou-se o boxplot apresentado na Figura \ref{fig:boxplot}.
+\vspace{-0.5cm}
+\noindent A análise da distribuição mensal de temperatura evidencia padrões sazonais ao longo do ano de 2021, conforme apresentado na Figura \ref{fig:boxplot}.
 
 \begin{figure}[H]
     \centering
@@ -148,9 +139,7 @@ Para entender a distribuição mensal, analisou-se o boxplot apresentado na Figu
     \label{fig:boxplot}
 \end{figure}
 
-A distribuição mensal evidencia um padrão sazonal bem definido. Janeiro a março apresentam medianas elevadas, com fevereiro como o mês mais quente. Entre abril e julho ocorre a queda gradual da temperatura, atingindo o mínimo anual em julho. 
-
-No entanto, observa-se uma anomalia significativa entre os meses de \textbf{abril e julho}: a variabilidade dos dados reduz-se drasticamente, apresentando um comportamento artificialmente estável. Isso sugere fortemente a ocorrência de falhas na coleta dos dados brutos durante este período, as quais foram preenchidas pelas técnicas de tratamento e interpolação do pipeline.
+A distribuição mensal evidencia um padrão sazonal bem definido. Janeiro a março apresentam medianas elevadas, com fevereiro como o mês mais quente. Entre abril e julho ocorre a queda gradual da temperatura, atingindo o mínimo anual em julho. No entanto, observa-se uma anomalia significativa entre os meses de \textbf{abril e julho}: a variabilidade dos dados reduz-se drasticamente, apresentando um comportamento artificialmente estável. Isso sugere fortemente a ocorrência de falhas na coleta dos dados brutos durante este período, as quais foram preenchidas pelas técnicas de tratamento e interpolação do pipeline.
 
 A partir de agosto, a temperatura volta a subir, com maior variabilidade e presença consistente de outliers. Esses valores extremos aparecem ao longo de quase todo o ano, predominando em março, agosto, setembro, outubro, novembro e dezembro.
 
@@ -163,8 +152,7 @@ A seleção de \textit{features} foi guiada pela matriz de correlação (Figura 
     \label{fig:correlacao}
 \end{figure}
 
-A matriz de correlação revela associações lineares predominantemente fracas a moderadas entre as variáveis meteorológicas. O destaque principal é a correlação negativa moderada entre temperatura e pressão (-0,47). Observa-se também uma correlação positiva entre temperatura e radiação (0,32).
-As demais interações mostram baixa dependência linear. A umidade apresenta correlação negativa fraca com a radiação (-0,26) e uma dissociação quase total com a temperatura (-0,11). Vale ressaltar o comportamento da precipitação e da velocidade do vento: ambas exibem coeficientes extremamente próximos de zero, sugerindo que operam de forma independente das demais métricas analisadas.
+A matriz de correlação revela associações lineares predominantemente fracas a moderadas entre as variáveis meteorológicas. O destaque principal é a correlação negativa moderada entre temperatura e pressão (-0,47). Observa-se também uma correlação positiva entre temperatura e radiação (0,32). As demais interações mostram baixa dependência linear. A umidade apresenta correlação negativa fraca com a radiação (-0,26) e uma dissociação quase total com a temperatura (-0,11). Vale ressaltar o comportamento da precipitação e da velocidade do vento: ambas exibem coeficientes extremamente próximos de zero, sugerindo que operam de forma independente das demais métricas analisadas.
 
 % --- SUBSEÇÃO 4.2: AVALIAÇÃO DO MODELO ---
 \subsection{Avaliação do Modelo Preditivo}
