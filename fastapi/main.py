@@ -7,7 +7,7 @@ import io
 import os
 from datetime import datetime
 import psycopg2
-from psycopg2.extras import execute_values
+from psycopg2.extras import execute_values, execute_batch
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -172,7 +172,7 @@ def save_to_postgres(df: pd.DataFrame):
         INSERT INTO dados_meteorologicos 
         (datetime, data, hora_utc, precipitacao, pressao, radiacao, 
          temperatura, umidade, vento_direcao, vento_velocidade)
-        VALUES %s
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (datetime) DO UPDATE SET
             precipitacao = EXCLUDED.precipitacao,
             pressao = EXCLUDED.pressao,
@@ -183,7 +183,7 @@ def save_to_postgres(df: pd.DataFrame):
             vento_velocidade = EXCLUDED.vento_velocidade
         """
         
-        execute_values(cursor, insert_query, values)
+        execute_batch(cursor, insert_query, values, page_size=1000)
         conn.commit()
         logger.info(f"{len(values)} registros inseridos/atualizados no PostgreSQL")
         
@@ -276,16 +276,25 @@ async def get_stats():
         cursor.close()
         conn.close()
         
+        def safe_float(value):
+            """Converte float para valor JSON-safe"""
+            if value is None:
+                return None
+            import math
+            if math.isnan(value) or math.isinf(value):
+                return None
+            return round(float(value), 2)
+        
         return {
-            "total_records": result[0],
+            "total_records": result[0] if result[0] else 0,
             "date_range": {
                 "min": result[1].isoformat() if result[1] else None,
                 "max": result[2].isoformat() if result[2] else None
             },
             "averages": {
-                "temperatura": round(result[3], 2) if result[3] else None,
-                "umidade": round(result[4], 2) if result[4] else None,
-                "pressao": round(result[5], 2) if result[5] else None
+                "temperatura": safe_float(result[3]),
+                "umidade": safe_float(result[4]),
+                "pressao": safe_float(result[5])
             }
         }
     except Exception as e:
