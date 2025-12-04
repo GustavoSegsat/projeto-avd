@@ -4,6 +4,7 @@
 
 **Disciplina:** Análise e Visualização de Dados - 2025.2  
 **Instituição:** CESAR School  
+**Estação:** Recife/PE (Código A301) - Período: 2021  
 **Problema:** Previsão de Temperatura Horária com base em variáveis meteorológicas
 
 ## 👥 Membros do Projeto
@@ -71,13 +72,13 @@ docker-compose ps
 4. **Faça upload do arquivo CSV via API:**
 ```bash
 # Windows PowerShell
-curl -X POST "http://localhost:8000/upload" -F "file=@INMET_SE_RJ_A652_RIO DE JANEIRO - FORTE DE COPACABANA_01-01-2024_A_31-12-2024.CSV"
+curl -X POST "http://localhost:8000/upload" -F "file=@INMET_NE_PE_A301_RECIFE_01-01-2021_A_31-12-2021.CSV"
 
 # Ou usando o script Python
-python upload_data.py "fastapi/INMET_SE_RJ_A652_RIO DE JANEIRO - FORTE DE COPACABANA_01-01-2024_A_31-12-2024.CSV"
+python upload_data.py
 
-# Ou usando Python diretamente
-python -c "import requests; requests.post('http://localhost:8000/upload', files={'file': open('fastapi/INMET_SE_RJ_A652_RIO DE JANEIRO - FORTE DE COPACABANA_01-01-2024_A_31-12-2024.CSV', 'rb')})"
+# Ou especificando o arquivo manualmente
+python upload_data.py "caminho/para/INMET_NE_PE_A301_RECIFE_01-01-2021_A_31-12-2021.CSV"
 ```
 
 5. **Acesse os serviços:**
@@ -165,7 +166,7 @@ Métricas avaliadas:
 - Os dados são persistidos em volumes Docker, então não serão perdidos ao reiniciar
 - O MinIO está configurado para usar credenciais padrão (altere em produção)
 - O PostgreSQL cria automaticamente as tabelas via scripts em `sql_scripts/`
-- **Dados do projeto:** Estação Forte de Copacabana (Rio de Janeiro), código A652, período 2024
+- **Dados do projeto:** Estação de Recife/PE (Código A301), período 2021 (dados horários do INMET)
 - **JupyterLab:** Não requer token de autenticação (acesso direto)
 
 ## 🐛 Troubleshooting

@@ -1,0 +1,266 @@
+\documentclass[12pt]{article}
+
+% Pacotes necessários conforme o modelo da SBC
+\usepackage{sbc-template}
+\usepackage{graphicx,url}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{float} % Para posicionamento exato das imagens [H]
+
+\sloppy
+
+% Título do Projeto
+\title{Pipeline de Análise e Visualização de Dados Meteorológicos: Previsão de Temperatura com Machine Learning}
+
+% --- AUTORES ---
+\author{Gustavo Carneiro\inst{1}, Pedro Antônio\inst{1}, João Marcelo\inst{1}, Thiago Queiroz\inst{1}, \\
+Matheus Araújo\inst{1}, Felipe Santos\inst{1}, Felipe Queiroz\inst{1}, Júlia Sales\inst{1}}
+
+% --- AFILIAÇÃO ---
+\address{
+  CESAR School -- Bacharelado em Ciência da Computação
+  \nextinstitute
+  Disciplina de Análise e Visualização de Dados -- 2025.2
+  \nextinstitute
+  \email{\{gcic, pafm, jmpq, tcq, mhma, fsmf, fbq, jsn\}@cesar.school}
+}
+
+\begin{document}
+
+\maketitle
+
+% Resumo e Abstract
+\begin{abstract}
+  This technical report presents the development of a complete Business Intelligence (BI) and Data Engineering pipeline for meteorological data analysis. Using data from INMET (Recife station), we implemented an architecture based on Docker containers integrating FastAPI for ingestion, MinIO and PostgreSQL for storage, and MLFlow for model versioning. The project culminates in the prediction of hourly temperature using regression models and visualization via ThingsBoard dashboards.
+\end{abstract}
+
+\begin{resumo}
+  Este relatório técnico apresenta o desenvolvimento de um pipeline completo de Business Intelligence (BI) e Engenharia de Dados para análise meteorológica. Utilizando dados do INMET (estação Recife), implementou-se uma arquitetura em contêineres Docker integrando FastAPI para ingestão, MinIO e PostgreSQL para armazenamento, e MLFlow para versionamento de modelos. O projeto culmina na predição de temperatura horária utilizando modelos de regressão e visualização via dashboards no ThingsBoard.
+\end{resumo}
+
+% SEÇÃO 1
+\section{Introdução}
+Este projeto visa o desenvolvimento de um pipeline completo de análise e visualização de dados meteorológicos obtidos do Instituto Nacional de Meteorologia (INMET). O foco do estudo é a estação de Recife (PE), código A301, abrangendo o período de 2021.
+
+A proposta envolve o uso de tecnologias modernas para coleta, tratamento, integração e visualização de dados, dentro de uma arquitetura em contêineres baseada em Docker.
+
+Para garantir a reprodutibilidade deste estudo e a transparência do processo de engenharia, todo o código fonte, scripts de orquestração e documentação técnica estão disponíveis publicamente no repositório do projeto: \url{https://github.com/gustavosegsat/projeto-avd}.
+
+\subsection{Metadados da Estação A301 (Recife/PE)}
+Para reforçar o atendimento ao requisito de uso de dados de Pernambuco, apresentamos os metadados essenciais da estação automática do INMET utilizada:
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ll}
+        \hline
+        Código da Estação & A301 \\
+        Nome & Recife (PE) \\
+        Tipo & Automática (horária) \\
+        Período de Análise & Ano de 2021 (horário) \\
+        Variáveis-Chave & Temperatura, Umidade, Pressão, Vento (direção/velocidade), Radiação, Precipitação \\
+        \hline
+    \end{tabular}
+    \caption{Metadados resumidos da estação INMET A301 utilizada neste estudo.}
+    \label{tab:estacao_a301}
+\end{table}
+
+\subsection{Objetivos}
+O objetivo principal deste trabalho é prever a temperatura horária com base em variáveis meteorológicas históricas, desenvolvendo habilidades práticas de engenharia de dados e BI. Os objetivos específicos incluem:
+\begin{itemize}
+    \item Implementar um fluxo de ingestão automatizado via FastAPI.
+    \item Estruturar um Data Lakehouse híbrido com MinIO (dados brutos) e PostgreSQL (dados estruturados).
+    \item Aplicar técnicas de limpeza e tratamento de dados (interpolação, remoção de outliers).
+    \item Treinar e versionar modelos de Machine Learning (Random Forest e Gradient Boosting).
+    \item Disponibilizar os resultados em dashboards interativos no ThingsBoard.
+\end{itemize}
+
+% SEÇÃO 2
+\section{Arquitetura e Ferramentas}
+A solução foi construída sobre uma arquitetura de microsserviços orquestrada via Docker Compose, garantindo isolamento e reprodutibilidade do ambiente.
+
+\subsection{Componentes do Pipeline}
+O fluxo de dados segue as seguintes etapas, conforme a arquitetura proposta:
+\begin{enumerate}
+    \item \textbf{Ingestão:} A API FastAPI recebe os arquivos CSV brutos, realiza o parse inicial e direciona os dados para as camadas de armazenamento.
+    \item \textbf{Armazenamento (Raw):} O MinIO atua como Object Storage (compatível com S3) para persistência dos dados brutos.
+    \item \textbf{Armazenamento (Trusted):} O PostgreSQL armazena os dados estruturados e relacionais, facilitando consultas SQL analíticas.
+    \item \textbf{Processamento e ML:} O JupyterLab serve como ambiente de desenvolvimento para notebooks de tratamento e modelagem, integrado ao MLFlow para rastreamento de experimentos.
+    \item \textbf{Visualização:} O ThingsBoard consome os dados processados e as predições para exibição em dashboards IoT.
+\end{enumerate}
+
+\subsection{Decisão de Armazenamento Estruturado (Snowflake vs. Base Local)}
+Conforme a especificação do projeto, a camada de dados estruturados poderia ser implementada no Snowflake \textit{ou} em uma base local (SQLite/PostgreSQL). Optamos por \textbf{PostgreSQL} por viabilidade operacional no ambiente Docker local (menor custo, menor complexidade de credenciais e rede), mantendo compatibilidade com as consultas SQL exigidas e com a integração aos demais serviços do pipeline. Essa decisão atende ao requisito técnico ao utilizar a alternativa local prevista.
+
+% SEÇÃO 3
+\section{Metodologia}
+A metodologia adotada seguiu o ciclo de vida clássico de ciência de dados, adaptado para um fluxo de engenharia contínuo.
+
+\subsection{Coleta e Ingestão}
+Os dados foram coletados do INMET na frequência horária. O serviço de ingestão trata problemas de encoding (Latin-1) e tipagem antes da persistência.
+
+\subsection{Tratamento e Limpeza}
+No JupyterLab, foram aplicadas as seguintes técnicas:
+\begin{itemize}
+    \item \textbf{Limpeza:} Remoção de registros nulos e validação de consistência temporal.
+    \item \textbf{Interpolação:} Utilização de interpolação linear para preenchimento de falhas em séries temporais contínuas.
+    \item \textbf{Outliers:} Remoção de valores espúrios de temperatura utilizando o método do Intervalo Interquartil (IQR).
+    \item \textbf{Feature Engineering:} Criação de variáveis temporais (hora, dia, mês) e cíclicas (seno/cosseno de hora) para capturar a sazonalidade dos dados.
+\end{itemize}
+
+\subsection{Variáveis Meteorológicas Utilizadas}
+Para atender explicitamente aos requisitos técnicos, utilizamos, no mínimo, as seguintes variáveis horárias das estações automáticas do INMET em Pernambuco (com foco na estação Recife/PE, código A301):
+\begin{itemize}
+    \item Temperatura do ar (\textit{air temperature});
+    \item Umidade relativa (\textit{relative humidity});
+    \item Pressão atmosférica (\textit{atmospheric pressure});
+    \item Direção do vento (\textit{wind direction});
+    \item Velocidade do vento (\textit{wind speed});
+    \item Radiação solar (\textit{solar radiation});
+    \item Precipitação (\textit{precipitation}).
+\end{itemize}
+Essas variáveis foram empregadas na análise exploratória, no tratamento e na modelagem preditiva de temperatura horária.
+
+\subsection{Modelagem Preditiva}
+O problema foi modelado como uma regressão supervisionada. O dataset foi dividido em treino (80\%) e teste (20\%), respeitando a ordem cronológica para evitar \textit{data leakage}. Foram avaliados dois algoritmos principais: Random Forest Regressor e Gradient Boosting Regressor.
+
+% SEÇÃO 4
+\section{Análises e Resultados}
+
+Nesta seção, apresentamos a análise exploratória dos dados meteorológicos coletados, seguida pela avaliação de desempenho dos modelos preditivos desenvolvidos e a interpretação das variáveis mais relevantes.
+
+% --- SUBSEÇÃO 4.1: ANÁLISE EXPLORATÓRIA ---
+\subsection{Análise Exploratória dos Dados}
+
+A análise inicial da série temporal (Figura \ref{fig:serie_temporal}) apresenta a variação da temperatura horária ao longo de todo o ano de 2021. Observa-se a consistência dos dados após o tratamento, bem como a tendência macroscópica de queda de temperatura nos meses centrais do ano, condizente com o inverno na região.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{serie_temporal_temperatura.png}
+    \caption{Série temporal da temperatura horária (Jan-Dez 2021).}
+    \label{fig:serie_temporal}
+\end{figure}
+
+Para entender a distribuição mensal, analisou-se o boxplot apresentado na Figura \ref{fig:boxplot}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{temperatura_por_mes.png}
+    \caption{Boxplot da distribuição de temperatura por mês.}
+    \label{fig:boxplot}
+\end{figure}
+
+A distribuição mensal evidencia um padrão sazonal bem definido. Janeiro a março apresentam medianas elevadas, com fevereiro como o mês mais quente. Entre abril e julho ocorre a queda gradual da temperatura, atingindo o mínimo anual em julho. 
+
+No entanto, observa-se uma anomalia significativa entre os meses de \textbf{abril e julho}: a variabilidade dos dados reduz-se drasticamente, apresentando um comportamento artificialmente estável. Isso sugere fortemente a ocorrência de falhas na coleta dos dados brutos durante este período, as quais foram preenchidas pelas técnicas de tratamento e interpolação do pipeline.
+
+A partir de agosto, a temperatura volta a subir, com maior variabilidade e presença consistente de outliers. Esses valores extremos aparecem ao longo de quase todo o ano, predominando em março, agosto, setembro, outubro, novembro e dezembro.
+
+A seleção de \textit{features} foi guiada pela matriz de correlação (Figura \ref{fig:correlacao}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{matriz_correlacao.png}
+    \caption{Matriz de correlação entre as variáveis meteorológicas.}
+    \label{fig:correlacao}
+\end{figure}
+
+A matriz de correlação revela associações lineares predominantemente fracas a moderadas entre as variáveis meteorológicas. O destaque principal é a correlação negativa moderada entre temperatura e pressão (-0,47). Observa-se também uma correlação positiva entre temperatura e radiação (0,32).
+As demais interações mostram baixa dependência linear. A umidade apresenta correlação negativa fraca com a radiação (-0,26) e uma dissociação quase total com a temperatura (-0,11). Vale ressaltar o comportamento da precipitação e da velocidade do vento: ambas exibem coeficientes extremamente próximos de zero, sugerindo que operam de forma independente das demais métricas analisadas.
+
+% --- SUBSEÇÃO 4.2: AVALIAÇÃO DO MODELO ---
+\subsection{Avaliação do Modelo Preditivo}
+
+O modelo Random Forest foi treinado com 80\% dos dados e testado nos 20\% restantes. A Figura \ref{fig:predicao} apresenta o comparativo entre os valores reais e previstos.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{resultados_predicao.png}
+    \caption{Comparação: Temperatura Real vs. Prevista (Random Forest).}
+    \label{fig:predicao}
+\end{figure}
+
+A comparação temporal demonstra que, embora o modelo consiga acompanhar a tendência macro da temperatura, ele apresenta um viés de superestimação sistemática. A linha predita exibe um comportamento excessivamente oscilatório ("ruidoso") em contraste com a suavidade da série real. Essa discrepância torna-se crítica a partir de 15 de novembro, onde o modelo passa a projetar consistentemente valores superiores aos observados, falhando em capturar a magnitude exata dos picos e vales.
+
+O gráfico de dispersão (Figura \ref{fig:scatter}) aprofunda essa análise de erro.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{visualizacao_predicoes.png}
+    \caption{Dispersão dos valores Reais vs. Preditos.}
+    \label{fig:scatter}
+\end{figure}
+
+O gráfico inferior detalha a magnitude dessas falhas, resultando em um \textbf{RMSE de 3,08°C}. A distribuição dos resíduos é volátil, oscilando predominantemente entre -6,5°C e +4°C. Os erros mais graves são negativos (Real $<$ Predito), com destaque para os vales profundos observados tanto em meados de novembro quanto no período crítico entre 5 e 8 de dezembro. Essa persistência de valores negativos no final da série corrobora o viés de aquecimento excessivo nas projeções do modelo.
+
+% --- SUBSEÇÃO 4.3: INTERPRETAÇÃO E DIAGNÓSTICO ---
+\subsection{Interpretação e Diagnóstico}
+
+Para compreender o comportamento do modelo, analisou-se a importância atribuída a cada variável (Figura \ref{fig:feature_imp}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{importancia_features.png}
+    \caption{Importância das features no modelo Random Forest.}
+    \label{fig:feature_imp}
+\end{figure}
+
+A análise de importância das variáveis revela uma hierarquia de influência extremamente concentrada. A feature \textbf{dia\_ano} exerce um domínio absoluto sobre o modelo (importância de $\sim$0,47), indicando que a sazonalidade — a posição da data dentro do ciclo anual — é, de longe, o maior determinante para a previsão da temperatura. A \textbf{umidade} aparece como a segunda variável mais relevante ($\sim$0,23), consolidando-se como o principal fator físico meteorológico considerado pelo algoritmo. Num patamar intermediário, encontram-se radiação e pressão. As demais variáveis, incluindo precipitação e vento, desempenham papéis marginais.
+
+Por fim, a análise de resíduos (Figura \ref{fig:erros}) valida estatisticamente o modelo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{distribuicao_erros.png}
+    \caption{Histograma da distribuição dos erros (Resíduos).}
+    \label{fig:erros}
+\end{figure}
+
+A análise da distribuição dos resíduos complementa o diagnóstico temporal. O histograma apresenta uma conformação aproximadamente gaussiana (forma de sino), indicando que a maior parte dos erros se concentra em torno de zero. No entanto, observa-se uma assimetria na cauda esquerda da distribuição (valores negativos). Isso corrobora estatisticamente o viés de superestimação identificado anteriormente, refletindo a dificuldade do algoritmo em acompanhar as quedas bruscas de temperatura.
+
+% SEÇÃO 5
+\section{Dashboard e Visualização}
+O dashboard final foi implementado na plataforma ThingsBoard, permitindo a monitoração das condições meteorológicas em tempo real simulado. A interface, apresentada na Figura \ref{fig:dashboard}, foi estruturada para fornecer insights imediatos.
+
+A visualização integra:
+\begin{itemize}
+    \item \textbf{Série Temporal:} Gráficos de linha comparando os valores reais e preditos.
+    \item \textbf{Métricas de Erro:} Cartões (\textit{cards}) indicando o erro médio atual.
+    \item \textbf{Alarmes:} Indicadores visuais para temperaturas extremas.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{screenshot_thingsboard.jpeg}
+    \caption{Captura de tela do Dashboard no ThingsBoard.}
+    \label{fig:dashboard}
+\end{figure}
+
+\subsection{Registro de Experimentos (MLFlow)}
+Os experimentos de modelagem foram versionados no \textbf{MLFlow} (porta 5000), conforme configurado na orquestração Docker. Cada execução de treinamento registra hiperparâmetros, métricas (ex. RMSE) e artefatos do modelo. Essa prática garante reprodutibilidade e auditoria dos resultados, atendendo ao requisito de registro/gestão de experimentos do pipeline.
+
+% SEÇÃO 6
+\section{Conclusão}
+O projeto atingiu o objetivo de construir um pipeline de dados robusto e funcional. A arquitetura em contêineres provou-se eficaz para modularizar as etapas de ETL e ML. O modelo preditivo alcançou uma precisão satisfatória para a tendência geral (baseada fortemente na sazonalidade), embora a análise crítica tenha revelado oportunidades de melhoria na predição de extremos térmicos diários.
+
+Melhorias futuras incluem a implementação de modelos de Deep Learning (como LSTMs) para melhor captura de dependências temporais de curto prazo e a automação do retreinamento do modelo (CD4ML).
+
+\bibliographystyle{sbc}
+\begin{thebibliography}{1}
+
+\bibitem{inmet}
+INMET.
+\newblock Instituto nacional de meteorologia.
+\newblock \url{https://portal.inmet.gov.br/}.
+
+\bibitem{fastapi}
+Tiangolo, S.
+\newblock Fastapi documentation.
+\newblock \url{https://fastapi.tiangolo.com/}.
+
+\bibitem{mlflow}
+Zaharia, M. et al.
+\newblock Mlflow: A platform for the machine learning lifecycle.
+\newblock \url{https://mlflow.org/}.
+
+\end{thebibliography}
+
+\end{document}
