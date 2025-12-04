@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1764852504.05953 "c:/Users/Ju/Documents/GitHub/projeto-avd/reports/relatorio_avd_src/main.tex" "main.pdf" "main" 1764852508.97958 2
+["pdflatex"] 1764852586.60389 "c:/Users/Ju/Documents/GitHub/projeto-avd/reports/relatorio_avd_src/main.tex" "main.pdf" "main" 1764852591.41158 2
   "C:/Users/Ju/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1764828202 82507 a9eef8696c92627b87e9975edea03b2a ""
   "C:/Users/Ju/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1764828177 13332059 af191c8831b34a295dd619120d5d41b0 ""
   "C:/Users/Ju/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc" 1458473887 4993 80dc9bab7f31fb78a000ccfed0e27cab ""
@@ -81,7 +81,7 @@
   "c:/Users/Ju/Documents/GitHub/projeto-avd/reports/relatorio_avd_src/main.tex" 1764852498 17429 90b49df42ba0183fb02e988446869320 ""
   "distribuicao_erros.png" 1764823875 103102 d9a9203682c51e9b50e6094ff2a2dd43 ""
   "importancia_features.png" 1764823875 118728 dfb4133ab7f022267a3cac2506777504 ""
-  "main.aux" 1764852508 4437 5818cdadefc8644c80a9d356bf95157b "pdflatex"
+  "main.aux" 1764852591 4437 5818cdadefc8644c80a9d356bf95157b "pdflatex"
   "main.tex" 1764852498 17429 90b49df42ba0183fb02e988446869320 ""
   "matriz_correlacao.png" 1764823875 242778 e56205d993061281c41897f3ce9b2799 ""
   "resultados_predicao.png" 1764823875 1024004 c3c74688ca917b3fcf480c419993ba6e ""
