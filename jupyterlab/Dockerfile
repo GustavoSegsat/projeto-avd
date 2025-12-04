@@ -13,7 +13,6 @@ USER jovyan
 RUN pip install --no-cache-dir \
     psycopg2-binary==2.9.9 \
     minio==7.2.0 \
-    boto3==1.29.7 \
     mlflow==2.8.1 \
     scikit-learn==1.3.2 \
     matplotlib==3.8.2 \
