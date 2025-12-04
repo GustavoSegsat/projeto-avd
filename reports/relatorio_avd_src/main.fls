@@ -1,6 +1,6 @@
-PWD c:\Users\Ju\Documents\GitHub\projeto-avd\reports\relatorio_avd
+PWD c:\Users\Ju\Documents\GitHub\projeto-avd\reports\relatorio_avd_src
 INPUT C:\Users\Ju\AppData\Local\MiKTeX\miktex\data\le\pdftex\pdflatex.fmt
-INPUT c:\Users\Ju\Documents\GitHub\projeto-avd\reports\relatorio_avd\main.tex
+INPUT c:\Users\Ju\Documents\GitHub\projeto-avd\reports\relatorio_avd_src\main.tex
 OUTPUT main.log
 INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\latex\base\article.cls
 INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\latex\base\article.cls
@@ -51,13 +51,11 @@ INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\generic\babel\txtbabel.def
 INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\latex\arabi\bblopts.cfg
 INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\latex\arabi\bblopts.cfg
 INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\latex\arabi\bblopts.cfg
-INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\generic\babel\locale\invalid\babel-brazil.tex
-INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\generic\babel\locale\invalid\babel-brazil.tex
-INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\generic\babel\locale\invalid\babel-brazil.tex
-INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\generic\babel\locale\pt\babel-pt-BR.ini
-INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\latex\babel-portuges\brazilian.ldf
-INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\latex\babel-portuges\brazilian.ldf
-INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\latex\babel-portuges\brazilian.ldf
+INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\generic\babel\locale\und\babel-und-x-nil.ini
+INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\generic\babel\nil.ldf
+INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\generic\babel\nil.ldf
+INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\generic\babel\nil.ldf
+INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\generic\babel\errbabel.def
 INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\latex\float\float.sty
 INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\latex\float\float.sty
 INPUT C:\Users\Ju\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\ot1ptm.fd
